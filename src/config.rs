@@ -98,8 +98,8 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["rd.0vk.com"];
-pub const RS_PUB_KEY: &str = "137858006";
+pub const RENDEZVOUS_SERVERS: &[&str] = &["地址"];
+pub const RS_PUB_KEY: &str = "key";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 22222;
