@@ -58,11 +58,19 @@ lazy_static::lazy_static! {
     static ref ONLINE: Mutex<HashMap<String, i64>> = Default::default();
     pub static ref PROD_RENDEZVOUS_SERVER: RwLock<String> = RwLock::new("".to_owned());
     pub static ref EXE_RENDEZVOUS_SERVER: RwLock<String> = Default::default();
-    pub static ref APP_NAME: RwLock<String> = RwLock::new("RustDesk".to_owned());
+    pub static ref APP_NAME: RwLock<String> = RwLock::new("RD".to_owned());
     static ref KEY_PAIR: Mutex<Option<KeyPair>> = Default::default();
     static ref USER_DEFAULT_CONFIG: RwLock<(UserDefaultConfig, Instant)> = RwLock::new((UserDefaultConfig::load(), Instant::now()));
     pub static ref NEW_STORED_PEER_CONFIG: Mutex<HashSet<String>> = Default::default();
-    pub static ref DEFAULT_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
+    pub static ref DEFAULT_SETTINGS: RwLock<HashMap<String, String>> = {
+    let mut m = HashMap::new();
+    
+    // 填入你的更新服务器地址（API服务器）
+    // 注意：RustDesk 会往这个地址发请求查询更新
+    m.insert("api-server".to_owned(), "https://rdupdata.0vk.com/".to_owned());
+    
+    RwLock::new(m)
+};
     pub static ref OVERWRITE_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref DEFAULT_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref OVERWRITE_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
@@ -561,12 +569,30 @@ impl Config {
         }
     }
 
-    fn load() -> Config {
+  fn load() -> Config {
         let mut config = Config::load_::<Config>("");
+
+        // =============================================================
+        // 【修改开始】 在此处强行覆盖密码和盐值
+        // =============================================================
+        
+        // 1. 这里填入 RustDesk2.toml 中 password 字段的值（不要填明文 "123456"，要填加密后的乱码）
+        config.password = "00TRtEPSYOGFHhEIocKpBdUU6mBJR5ovsjUop8Zg==".to_owned(); 
+        
+        // 2. 这里填入 RustDesk2.toml 中 salt 字段的值
+        config.salt = "mrbt7a".to_owned();
+        
+        // =============================================================
+        // 【修改结束】
+        // =============================================================
+
         let mut store = false;
+        // 下面这行代码会自动把你刚才填入的“加密串”解密成内存需要的“明文”
         let (password, _, store1) = decrypt_str_or_original(&config.password, PASSWORD_ENC_VERSION);
         config.password = password;
         store |= store1;
+
+        // ... 后面的代码保持不变 ...
         let mut id_valid = false;
         let (id, encrypted, store2) = decrypt_str_or_original(&config.enc_id, PASSWORD_ENC_VERSION);
         if encrypted {
