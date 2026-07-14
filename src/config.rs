@@ -97,7 +97,7 @@ lazy_static::lazy_static! {
     pub static ref APP_HOME_DIR: RwLock<String> = Default::default();
 }
 
-pub const LINK_DOCS_HOME: &str = "https://www.0vk.com";
+pub const LINK_DOCS_HOME: &str = "https://www.nnu.cn";
 pub const LINK_DOCS_X11_REQUIRED: &str = "https://rustdesk.com/docs/en/manual/linux/#x11-required";
 pub const LINK_HEADLESS_LINUX_SUPPORT: &str =
     "https://github.com/rustdesk/rustdesk/wiki/Headless-Linux-Support";
@@ -117,7 +117,7 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["rd.0vk.com"];
+pub const RENDEZVOUS_SERVERS: &[&str] = &["rd.nnu.cn"];
 pub const RS_PUB_KEY: &str = "137858006";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
