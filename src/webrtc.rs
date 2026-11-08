@@ -501,7 +501,11 @@ impl WebRTCStream {
     #[inline]
     fn get_cc_enabled() -> bool {
         let k = config::keys::OPTION_ALLOW_WEBRTC_CC;
-        config::option2bool(k, &config::Config::get_option(k))
+        let value = config::Config::get_option(k);
+        if value.is_empty() && config::Config::get_option("nnu-network-adaptation") == "Y" {
+            return true;
+        }
+        config::option2bool(k, &value)
     }
 
     #[inline]
@@ -647,9 +651,8 @@ impl WebRTCStream {
             IpAddr::V4(_) => true,
         }));
 
-        // KCP's nc=1 profile by default, with the same opt-in to a congestion window as
-        // `allow-kcp-congestion-control`, for the reason given at `get_kcp_cc_enabled`. Set per
-        // connection so the option takes effect on the next session, not the next start.
+        // Preserve explicit CC choices. The adaptive client opts into a congestion window;
+        // other users of this shared crate retain the nc=1 default. Applied per association.
         webrtc::sctp::association::set_no_congestion_control(!Self::get_cc_enabled());
 
         // Create the API object
